@@ -90,3 +90,4 @@ To add regularization to a PyTorch neural network model, you can use various tec
 
 #### 数据增强
 
+notebook修改了之后要找到第一次定义的cell 重新往下运行, 不能从中间运行. 不然会很奇怪. 
