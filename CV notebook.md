@@ -98,8 +98,6 @@ notebook修改了之后要找到第一次定义的cell 重新往下运行, 不�
 
 问问题
 
-
-
 为什么0没有?  因为函数undefined. 不能除以0 
 
 为什么用torch.ones_like(ys)? 因为要归一化? 听不懂
@@ -127,3 +125,93 @@ num_classes = 3
 3. 准确性：该指标衡量正确分类对象的比例，通常用于分类任务。
 
 选择指标时，重要的是要考虑它应该是训练指标还是验证指标。训练指标衡量模型在训练数据上的表现，而验证指标衡量模型在保留验证集上的表现。通常，建议使用验证指标，因为这可以更准确地衡量模型的泛化性能。但是，在训练期间跟踪训练指标以监视模型的进度并检测潜在问题（例如过度拟合）也很有用。
+
+### confusion matrix
+
+行是actual class, 列是 predicted class.
+
+是猫, 预测是狗, false negative.  type I error
+
+是狗, 预测是猫, false positive.   type 2 error.
+
+是狗, 预测不是狗, true negative. 
+
+precision , tp/tp +fp .  预测猫对的/  **预测是猫的数量**
+
+accuracy, tp + tn / (total)  (预测猫对+ 预测狗对)/  total
+
+recall: TP/ (TP+FN)   预测猫对的/  **是猫的数量**
+
+precision相当于查准，可以理解为“我 预测是猫中有多少是对的”
+
+召回率相当于查全，可以理解为猫中，我下载到了多少”
+
+F.cross_entropy(x, y, w) 需要传入weight,  因为 standard cross-entropy loss function may be biased towards the majority class, 
+
+in binary classification, the accuracy for the Positive class is the same as the accuracy for the Negative class.
+
+f1同时考虑了recall和precision. 
+
+penn fudan dataset,  annotation是一个mask,  像素一一对应,  mask 是unsigned int mask (所以后面要改成long), 原图是3 channel RGB图. 
+
+ax.imshow(data_item['mask'], alpha=0.5) alpha是透明度
+
+miinst clutter dataset.
+
+-1给背景, [0,9] 给实际数字. 
+
+#### part1
+
+penn fudan, 只考虑行人和background.   image和mask是pil 格式. 
+
+mask是instance segmentation, 我们要改成semantic segment.
+
+`__getattr__` 包装了dataset所以可以直接访问属性
+
+把padding的变成特殊的. 
+
+#### task2
+
+用FCN,  U shape,  因为有 encoder和decoder. 
+
+空间downsampling, 用pooling . 或者卷积.
+
+upsampling, 用 un pooling , or deconv. deconv一般效果比较好. 
+
+网络太深, 会导致 梯度vanish. 所以, 需要skip或者leakyrelu. 不然收敛很慢. 
+
+Transpose2d会增加分辨率, deconv.   **interpolation**
+
+ kernel size of 2x2. 1一个像素变 2x2 output feature map. 
+
+训练了fudan
+
+[1,2]weight,  0.66 loss, 变成0.56.  [1,1,] loss好像更小了. recall更小了,  metric都变差了. 
+
+f1同时考虑了recall和precision. 
+
+##### FCN-8S
+
+用pretrain的 作为encoder. 比如VGG16 imagenet训练过,  frozenweight, fine tune only shallow decoder part, transfer learning.
+
+In a 1x1 convolution, the kernel size is 1x1 and the stride is also 1x1.
+
+The output of the convolution operation is simply the element-wise product of the weights and the input.
+
+### detection
+
+ MNISTClutter数据集
+
+iou 为什么不用? 因为iou不可导. 
+
+右x, y 下 , h,w.
+
+anchor :An anchor is just a bounding box ($4$ values) with $C$ class label probabilities (logits) and an additional confidence score $p_c$, sometimes called objectness score. 
+
+we can have for each grid cell three anchors; one for tall objects, one for wide objects, and one for square objects (we can define more)
+
+yolov3
+
+non maximum suppression. 解决double box. 这个果然考了. 
+
+每个数据处理都要变换的操作是什么 一个是crop, 一个是normalizetion. 
