@@ -202,7 +202,7 @@ The output of the convolution operation is simply the element-wise product of th
 
  MNISTClutter数据集
 
-iou 为什么不用? 因为iou不可导. 
+考试: iou 为什么不用? 因为iou不可导. 
 
 右x, y 下 , h,w.
 
@@ -215,3 +215,40 @@ yolov3
 non maximum suppression. 解决double box. 这个果然考了. 
 
 每个数据处理都要变换的操作是什么 一个是crop, 一个是normalizetion. 
+
+Collc fn 可以处理各种数据. 
+
+## project3
+
+训练 单个recurrent cell.每个element都会经过这个cell.
+
+cell 会输入一个hidden state.
+
+但是, 有时候语序需要变换. 所以要用bidirectional RNN. 
+
+activation 用 tanh
+
+LSTM , memory ,忘掉无关的.The gate does this by applying a sigmoid function to the weighted sum of the previous hidden state and the current input, and then element-wise multiplying the result with the memory cell. 再加一个cell state ,  可以应对长序列, 
+
+GRU   计算更快. batch_first=True 这样可以输入batch放前面他内部会转换. `nn.GRU` uses a number of `nn.GRUCell`'s according to the `num_layers` and the `bidirectional` arguments.
+
+### part2
+
+cifar10 , 
+
+训练的到53上不去了.  Emb 调大点看看. batch size变大,  hidden size变大. 
+
+你不能只用最后一维 ,out = self.fc(out[:, -1, :])
+
+16x16patches. So total 256 tokens.
+
+### part3
+
+transformer可以 并行处理整个序列. 而且不区分顺序. 
+
+增加位置信息
+
+最重要的是多头自注意力机制. 
+
+why only use x[:, 0, :]
+
