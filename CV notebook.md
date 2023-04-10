@@ -220,7 +220,9 @@ Collc fn 可以处理各种数据.
 
 ## project3
 
-训练 单个recurrent cell.每个element都会经过这个cell.
+翻译是many to many.
+
+训练单个recurrent cell.每个element都会经过这个cell.
 
 cell 会输入一个hidden state.
 
@@ -228,27 +230,45 @@ cell 会输入一个hidden state.
 
 activation 用 tanh
 
-LSTM , memory ,忘掉无关的.The gate does this by applying a sigmoid function to the weighted sum of the previous hidden state and the current input, and then element-wise multiplying the result with the memory cell. 再加一个cell state ,  可以应对长序列, 
+LSTM , 有memory ,忘掉无关的.The gate does this by applying a sigmoid function to the weighted sum of the previous hidden state and the current input, and then element-wise multiplying the result with the memory cell. 再加一个cell state ,  可以应对长序列, 
 
 GRU   计算更快. batch_first=True 这样可以输入batch放前面他内部会转换. `nn.GRU` uses a number of `nn.GRUCell`'s according to the `num_layers` and the `bidirectional` arguments.
 
 ### part2
 
-cifar10 , 
+cifar10, 训练的到53上不去了. batch size变大,  hidden size变大. 
 
-训练的到53上不去了.  Emb 调大点看看. batch size变大,  hidden size变大. 
+把图分成16x16patches. So total 256 tokens.
 
-你不能只用最后一维 ,out = self.fc(out[:, -1, :])
-
-16x16patches. So total 256 tokens.
+加个残差, 准确率高了18%, 太强了. 
 
 ### part3
 
-transformer可以 并行处理整个序列. 而且不区分顺序. 
-
-增加位置信息
-
-最重要的是多头自注意力机制. 
+transformer可以并行处理整个序列. 而且不区分顺序. 最重要的是多头自注意力机制. 
 
 why only use x[:, 0, :]
+
+ The output of the Transformer encoder is a sequence of hidden states for each patch in the input image. However, the final prediction for the image classification task only requires a single vector. Therefore, the CLS token (**the first token of the sequence)** is extracted by selecting the **first element of the output tensor** along the second dimension (which **represents the sequence length**). This extracted token is then passed through a linear layer (`self.head`) to produce the final classification prediction.
+
+简而言之，注意力只是一种权衡每个序列元素对其他序列元素影响的方法。例如，在视觉变换器（ViT）中，输入图像被裁剪成16x16像素的斑块，作为一个序列传递给网络（每个斑块都是一个序列元素，斑块在原始图像中的位置作为位置编码）。这样一来，每个补丁都可以从第一层开始关注其他每个补丁。感受区是整个图像，注意力权重矩阵直观地代表了每个斑块对其他斑块进行图像分类的重要性（回顾一下，注意力矩阵的大小是$N\times N$）。
+
+我们实质上是从序列中提取此 . 序列中的第一个patch,通过一个layer来预测. 
+
+位置编码用于基于 Transformer 的模型，以添加有关每个标记在输入序列中的位置的信息。由于这些模型没有任何固有的词序或位置概念，因此这些附加信息对于模型准确处理输入序列是必需的。
+
+输入序列中每个标记的位置使用每个位置的固定向量进行编码。该向量在传递给 Transformer 模型之前被添加到相应的标记嵌入中。生成的向量包含有关令牌及其在序列中的位置的信息。
+
+一个简单的可学习位置编码，而不是一个固定的位置编码，可以用来为位置编码引入一些灵活性。该模型不是使用固定编码，而是在训练期间为每个位置学习最佳编码。这可以帮助模型更好地适应手头任务的具体情况。
+
+然而，值得注意的是，可学习的位置编码会带来额外的计算开销，并且可能需要更多的训练数据才能获得良好的性能。在某些情况下，固定位置编码可能就足够了，而且效率更高。
+
+#### 问题
+
+1. attr.shape 是 4,100,100.  4 是batch size, 100是feature size
+2. kernel size变成3, 那要在四周 padding 1 .
+3. r i 的shape是什么?chunk分了之后  [batch size, hiddensize] ,  15是hidden size *3 
+4. GRU 每一层输出的shape是什么?   out = [batch , sequence , hidden size ] , hidden = [sequence x bidirected, batch size , hidden size ]
+5. 还有什么是线性不变的?  linear. 什么是线性不变? 
+6. confusion matrix是什么样的.
+7. softmax后 和是 1 . bmm 相乘
 
