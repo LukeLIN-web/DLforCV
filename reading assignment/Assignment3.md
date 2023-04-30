@@ -50,3 +50,52 @@ The Transformer can process extremely long sequences.
 
 
 
+# DLforCV
+
+1. 阅读题为 "LSTM和GRU的图解指南 "的博文： 一步一步的解释"，（（https://towardsdatascience.com/illustrated-guide-to-lstms-and-gru-s-a-stepbystep-explanation-44e9eb85bf21）。这篇博客可以给你一个关于LSTM和GRU的总体介绍。
+
+2. 你可以阅读原始论文（https://papers.nips.cc/paper/2017/file/3f5 ee243547dee91fbd053c1c4a845aa-Paper.pdf），或者阅读哈佛大学NLP小组的注释论文（http://nlp.seas.harvard.edu/2018/04/03/attention.html），或者Jay Alammar的博文《图解的变形器》（http://jalammar.github.io/illustratedtransformer/）。
+
+简要讨论LSTM和Transformer的贡献。比较RNN、LSTM和Transformer，并讨论它们是否能处理极长的序列，如果能，它们如何实现。
+
+## 贡献
+
+### LSTM
+
+1.  介绍记忆单元的概念，它是用来存储和更新信息的，随着时间的推移。所以它可以保留基本的词。
+2.  根据当前的输入，有选择地更新或遗忘前一个时间步骤的信息。
+3.  避免梯度探索和消失。
+
+### Transformer
+
+1. 用自我注意代替RNN，设计并实现了Transformer模型，这是第一个完全基于注意的序列转换模型。
+2. 提出了缩放点积注意、多头注意和无参数位置表示。
+3. 它启发了Bert和GPT。它在图像、音频和视频方面做了很好的表现。
+
+## 比较
+
+### RNN
+
+1. 隐藏层中的神经元通过隐藏状态连接。
+2. 问题：固有的顺序性排除了训练实例内的并行化，这在较长的序列长度上变得很关键，因为内存限制了批量化。变换器解决了这个问题。
+
+### LSTM
+
+1.  引入遗忘单元的概念。使极长的序列成为可能。
+
+### Transformer
+
+1. Transformer是第一个基于注意机制的转导模型，完全省去了递归和卷积。
+2. 允许明显更多的并行化，训练速度更快。
+3. 与其他序列模型如RNNs和LSTMs相比，更善于处理长序列。
+
+### 极长的序列
+
+RNN不能处理极长的序列。
+
+LSTM可以处理极长的序列，因为它有遗忘门来控制信息流入和流出存储单元。LSTM可以通过选择性地保留或丢弃信息来记住重要的旧信息。
+
+变换器可以处理极长的序列。
+
+1. 自我注意机制，它允许模型在计算其输出时有选择地注意输入序列的不同部分。这使得Transformer能够捕捉到其他序列成分之间的长距离依赖关系，而不需要训练计算成本很高的递归连接。
+2. 多头关注允许模型关注输入的不同部分。

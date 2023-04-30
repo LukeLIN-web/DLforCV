@@ -12,18 +12,11 @@ vscode 双击就可以折叠cell. 还可以用outline. vscode新装了软件之�
 source $(conda info --base)/etc/profile.d/conda.sh
 conda create -n cs323 python=3.9.2 -y
 conda activate cs323
-
-conda install pytorch=1.8.1 torchvision=0.9.1 torchaudio=0.8.1 cudatoolkit=11.1 -c pytorch -c conda-forge -y
-conda install jupyter=1.0.0 -y  # to edit this file
-conda install matplotlib=3.3.4 -y  # for plotting
-conda install tqdm=4.59.0 -y  # for a nice progress bar
-conda install tensorboard=2.4.0 -y  # to use tensorboard
-
 pip install jupyter_http_over_ws  # for Google Colab
 jupyter serverextension enable --py jupyter_http_over_ws  # Google Colab
 ```
 
-这样装会有问题, np.object弃用了. numpy1.24会出问题. Np.bool ,  tensorboard 源码  conda是垃圾. 能不用就不用.  感觉应该安装比较新的tensorboard. 不要管低版本, 都用高版本就行.
+会有问题, np.object弃用了. numpy1.24会出问题. Np.bool ,  tensorboard 源码  conda是垃圾. 能不用就不用.  感觉应该安装比较新的tensorboard. 不要管低版本, 都用高版本就行.
 
 project4要用tensorboard. docker容器要映射网络端口出去. 
 
@@ -35,9 +28,7 @@ mamba install python=3.9.2 pytorch==1.9.0 torchvision==0.10.0 torchaudio==0.9.0 
 
 助教用的是` pytorch1.10.2+python3.9.7+tensorboard2.8+numpy1.21.2`
 
-
-
-
+其实不用tensorboard也行, 就是图很多. 
 
 ## Assignment1
 
@@ -286,14 +277,26 @@ why only use x[:, 0, :]
 #### 问题
 
 1. attr.shape 是 4,100,100.  4 是batch size, 100是feature size
-2. kernel size变成3, 那要在四周 padding 1 .
+2. kernel size增大1, 那要在四周 padding 1 . 
 3. r i 的shape是什么?chunk分了之后  [batch size, hiddensize] ,  15是hidden size *3 
 4. GRU 每一层输出的shape是什么?   out = [batch , sequence , hidden size ] , hidden = [sequence x bidirected, batch size , hidden size ]
 5. 还有什么是线性不变的?  linear. 什么是线性不变? 
 6. confusion matrix是什么样的.
 7. softmax后 和是 1 . bmm 相乘
 
+非常喜欢考shape.
+
 ## project4
+
+### Part1 VAE
+
+用Flickr-Faces-HQ Dataset.
+
+Understand the following implementation and how does this compare to autoencoders? (3 points)
+
+与标准自动编码器相比，VAE 具有额外的概率组件，可以更有效地对潜在空间进行采样并生成新数据。
+
+VAE 与标准自动编码器的不同之处在于，它们向编码器网络添加了一个概率元素，其中编码器的输出表示潜在空间的概率分布，而不是固定编码。
 
 Then, we need to sample a latent vector from the normal distribution正态分布,  using a simple reparametrization trick . This trick is important in order be able to backpropagate the gradients back to the encoder. 
 
@@ -307,35 +310,64 @@ outputs= torch.Size([2, 3, 128, 128]) 这合理吗?
 
 用frechet 距离 between 两个高斯分布来评估. 第一个是数据集, 第二个是我们的样本. work on 提取出的特征. 
 
-fid 256 的sota只有个位数, 我一开始128数据集上训练 600多.
+重建损失计算为 VAE 输出与原始输入图像之间的均方误差。正则化损失是使用学习概率分布和标准正态分布之间的 KL 散度计算的，这鼓励学习分布与先验分布相匹配。
 
-​            \# TODO: vvvvvvvvvvv (0.5 points)
+#### Task2
 
-​            \# why do we multiply beta by this factor? (check the loss formula)
+ why do we multiply beta by this factor? (check the loss formula)
 
-​            \# factor = latent_dim / image_size
+ factor = latent_dim / image_size
 
-一直降不下来. 
+beta 参数控制正则化项的强度，并乘以一个取决于输入图像大小和潜在空间维数的因子。需要乘以该因子以确保正则化项相对于重建损失适当缩放。
 
-`[count, 1, 1]` tensor are broadcasted to match the dimensions of the `[N, F]` tensor as follows:  把NF 传播到 2 3 dim. 
+用 frechet distance.计算两个多变量高斯分布的距离. 用多变量normal 来fit 高斯分布,也会给label fit一个高斯分布, 然后计算距离.
 
-传入条件, conditional variational auto encoder  CVAE
+fid 256 的sota只有个位数, 我fid128数据集上训练 600多 距离.
 
-#### GAN 
+#### task3
+
+插值,扫描. 
+
+weight变成 `[count, 1, 1]` tensor are broadcasted to match the dimensions of the `[N, F]` tensor as follows:  把NF 传播到 2 3 dim. 
+
+能不能有更精细的控制? 传入条件, conditional variational auto encoder  CVAE
+
+### part2 GAN 
+
+实现一个DCGAN
+
+#### Task1
+
+图像是1x 32x32
 
 不会显示建模数据分布. 没有把image encoder 到latent vector.
 
-用一个discriminator 辨别器,来指导decoder, 也就是生成器. 
+用discriminator 辨别器,来指导decoder, 也就是生成器. 
 
 D(x) 是一个二分图分类, 判断真还是假. 把生成的作为假样本. 
 
-嵌入层将单热编码标签向量映射到特定大小的密集连续向量。该层的目的是为每个类学习有意义的嵌入，这可以帮助生成器更好地理解标签的底层语义。换句话说，嵌入层帮助生成器将特定特征与特定类相关联。然后将嵌入层的输出与潜在向量连接起来，并用作生成器的输入。
+#### 生成器
+
+1. 顶部分支的输入是什么（大小为100的向量）？ 顶部分支的输入是一个100维的均匀分布Z，通常被称为 "潜在向量"。这个向量作为生成器的随机性来源，它被用来合成一个可以骗过判别器的图像。
+
+2. 底部输入大小为num_classes的单热编码标签向量。这个向量提供了一个条件性标签，指导生成器的生成过程。条件性GANs背后的想法是将生成器的条件放在一些特定的类信息上，这样它就能生成属于某个特定类的图像。
+
+3. 嵌入层将one hot编码的标签向量映射为特定大小的密集连续向量。这一层的目的是为每个类别学习一个有意义的嵌入，这可以帮助生成器更好地理解标签的基本语义。换句话说，嵌入层帮助生成器将特定的特征与特定的类联系起来。嵌入层的输出与潜伏向量相连接，作为生成器的输入。
+4. 通过将每层的特征图的高度和宽度增加一倍，生成器能够产生更高分辨率的图像。
 
 转置卷积（也称为反卷积）是一种可用于对张量进行上采样的卷积运算。它与常规卷积运算相反，后者对张量进行下采样。
 
 在 GAN 生成器的上下文中，转置卷积用于逐渐增加特征图的空间分辨率。特别是，生成器中的转置卷积将形状为张量作为输入`[batch_size, channels, height, width]`并产生形状为 的张量`[batch_size, channels/2, height*2, width*2]`。通过将每一层特征图的高度和宽度加倍，生成器能够生成更高分辨率的图像。
 
 总之，转置卷积在 GAN 的生成器中起着关键作用，它允许生成具有更高分辨率和更细粒度细节的图像。
+
+
+
+(N x N) * (F x F) = (N-F+1)x(N-F+1)  普通卷积https://towardsdatascience.com/covolutional-neural-network-cb0883dd6529
+
+p = (F-1)/2 时,    输入和输出一样大小, 
+
+如果步长 > 1, 那要除步长. 
 
 #### task2
 
@@ -348,15 +380,25 @@ RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 7
 
 z是正态分布, Gz , 生成后. 
 
-D(x)   应该用sigmoid, 然后让他接近1 
+D(x)   应该用sigmoid, 然后让他接近1 . BCE内部有sigmoid.
 
 D(g(z)) 应该接近0 . 
 
 但是latent vector不是BatchSize * 100的形状吗? 为什么能变过去 4 x 512 x512? 为啥unflatten 就可以。 
 
+#### 分辨器
+
+1. what is the usage of the discriminator? 
+
+guide the decoder (here called the generator  to generate samples that are closer to the real distribution. 
+
+2. what is the output of the discriminator?
+
+binary image classifer with a single scalar output classifying whether an input image is real or fake (generated).
+
 #### 网络inversion
 
-在latent vector做梯度下降, 
+在latent vector上做梯度下降.
 
 #### bonus对抗攻击
 
