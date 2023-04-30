@@ -2,9 +2,42 @@
 
 运行前先activate conda 环境
 
-`jupyter notebook --ip 外网ip地址` 然后就可以查看服务器上的ipynb 文件了. 
+在服务器上运行`jupyter notebook --ip 服务器ip地址`  就可以查看服务器上的ipynb 文件了. 
 
-vscode 双击就可以折叠cell. 还可以用outline
+vscode 双击就可以折叠cell. 还可以用outline. vscode新装了软件之后记得reload window, 不然很多识别不出来. 
+
+#### 环境
+
+```
+source $(conda info --base)/etc/profile.d/conda.sh
+conda create -n cs323 python=3.9.2 -y
+conda activate cs323
+
+conda install pytorch=1.8.1 torchvision=0.9.1 torchaudio=0.8.1 cudatoolkit=11.1 -c pytorch -c conda-forge -y
+conda install jupyter=1.0.0 -y  # to edit this file
+conda install matplotlib=3.3.4 -y  # for plotting
+conda install tqdm=4.59.0 -y  # for a nice progress bar
+conda install tensorboard=2.4.0 -y  # to use tensorboard
+
+pip install jupyter_http_over_ws  # for Google Colab
+jupyter serverextension enable --py jupyter_http_over_ws  # Google Colab
+```
+
+这样装会有问题, np.object弃用了. numpy1.24会出问题. Np.bool ,  tensorboard 源码  conda是垃圾. 能不用就不用.  感觉应该安装比较新的tensorboard. 不要管低版本, 都用高版本就行.
+
+project4要用tensorboard. docker容器要映射网络端口出去. 
+
+pip install tensorboard. conda会无法识别. [ No module named ‘tensorboard’](https://discuss.pytorch.org/t/tensorboard-in-virtualenvironment-no-module-named-tensorboard/77864) 
+
+```
+mamba install python=3.9.2 pytorch==1.9.0 torchvision==0.10.0 torchaudio==0.9.0 cudatoolkit=11.3 matplotlib=3.3.4 tqdm=4.59.0 tensorboard=2.4.1 numpy=1.23 ipykernel -c pytorch -c conda-forge
+```
+
+助教用的是` pytorch1.10.2+python3.9.7+tensorboard2.8+numpy1.21.2`
+
+
+
+
 
 ## Assignment1
 
@@ -50,8 +83,6 @@ We can use a small learning rate, such as 0.01 or 0.001, and adjust it as needed
 
 Iterations: The number of iterations, or epochs, determines how many times the algorithm will loop through the entire dataset during training. If the number of iterations is too low, the model may not converge to the optimal parameters. If the number of iterations is too high, the model may overfit to the training data and perform poorly on new, unseen data. A common approach is to monitor the performance of the model on a validation set during training and stop training when the performance stops improving or starts to worsen.
 
-
-
 #### 正则化
 
 \# learn more about regularization: https://stats.stackexchange.com/a/18765
@@ -62,17 +93,11 @@ Iterations: The number of iterations, or epochs, determines how many times the a
 
 To add regularization to a PyTorch neural network model, you can use various techniques, including L1 or L2 regularization, dropout, early stopping, and others.
 
-#### weight decay
-
-
-
 #### pooling
 
 你就可以理解为卷积核每空两格做一次卷积，卷积核的大小是2x2， 但是卷积核的作用是取这个核里面最大的值（即特征最明显的值），而不是做卷积运算
 
 减小计算量, 学习特征. 
-
-
 
 多加一层    nn.Conv2d(256, 256, kernel_size=3, padding=1),
 
@@ -86,13 +111,9 @@ To add regularization to a PyTorch neural network model, you can use various tec
 
 ​        \# at least use 3 other transforms
 
-
-
 #### 数据增强
 
 notebook修改了之后要找到第一次定义的cell 重新往下运行, 不能从中间运行. 不然会很奇怪. 
-
-
 
 #### 验收
 
@@ -271,4 +292,79 @@ why only use x[:, 0, :]
 5. 还有什么是线性不变的?  linear. 什么是线性不变? 
 6. confusion matrix是什么样的.
 7. softmax后 和是 1 . bmm 相乘
+
+## project4
+
+Then, we need to sample a latent vector from the normal distribution正态分布,  using a simple reparametrization trick . This trick is important in order be able to backpropagate the gradients back to the encoder. 
+
+Finally, we use a decoder network that generate an image given a latent vector. 值得注意 VAEs still care about the mean squared error between the generated image and the real one (as in autoencoders), therefore the ideal output of a VAE is the average image over all plausible ones.
+
+mean = torch.Size([2, 256]) 
+
+logvar = torch.Size([2, 256])  
+
+outputs= torch.Size([2, 3, 128, 128]) 这合理吗? 
+
+用frechet 距离 between 两个高斯分布来评估. 第一个是数据集, 第二个是我们的样本. work on 提取出的特征. 
+
+fid 256 的sota只有个位数, 我一开始128数据集上训练 600多.
+
+​            \# TODO: vvvvvvvvvvv (0.5 points)
+
+​            \# why do we multiply beta by this factor? (check the loss formula)
+
+​            \# factor = latent_dim / image_size
+
+一直降不下来. 
+
+`[count, 1, 1]` tensor are broadcasted to match the dimensions of the `[N, F]` tensor as follows:  把NF 传播到 2 3 dim. 
+
+传入条件, conditional variational auto encoder  CVAE
+
+#### GAN 
+
+不会显示建模数据分布. 没有把image encoder 到latent vector.
+
+用一个discriminator 辨别器,来指导decoder, 也就是生成器. 
+
+D(x) 是一个二分图分类, 判断真还是假. 把生成的作为假样本. 
+
+嵌入层将单热编码标签向量映射到特定大小的密集连续向量。该层的目的是为每个类学习有意义的嵌入，这可以帮助生成器更好地理解标签的底层语义。换句话说，嵌入层帮助生成器将特定特征与特定类相关联。然后将嵌入层的输出与潜在向量连接起来，并用作生成器的输入。
+
+转置卷积（也称为反卷积）是一种可用于对张量进行上采样的卷积运算。它与常规卷积运算相反，后者对张量进行下采样。
+
+在 GAN 生成器的上下文中，转置卷积用于逐渐增加特征图的空间分辨率。特别是，生成器中的转置卷积将形状为张量作为输入`[batch_size, channels, height, width]`并产生形状为 的张量`[batch_size, channels/2, height*2, width*2]`。通过将每一层特征图的高度和宽度加倍，生成器能够生成更高分辨率的图像。
+
+总之，转置卷积在 GAN 的生成器中起着关键作用，它允许生成具有更高分辨率和更细粒度细节的图像。
+
+#### task2
+
+```
+---> 37         x = torch.cat([x1, x2], dim=1)
+     38         x = self.convs2(x)
+     39         return x
+RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 7 but got size 8 for tensor number 1 in the list.要resize 到32  x32
+```
+
+z是正态分布, Gz , 生成后. 
+
+D(x)   应该用sigmoid, 然后让他接近1 
+
+D(g(z)) 应该接近0 . 
+
+但是latent vector不是BatchSize * 100的形状吗? 为什么能变过去 4 x 512 x512? 为啥unflatten 就可以。 
+
+#### 网络inversion
+
+在latent vector做梯度下降, 
+
+#### bonus对抗攻击
+
+增加perturabations 扰动, 但是要人类难以察觉. 
+
+Fast Sign Gradient Method (FGSM)
+
+Untargeted, 最大化loss .
+
+bird, 会变成frog ,攻击比较难. frog可以攻击成功. trunk可以攻击成bird.
 
