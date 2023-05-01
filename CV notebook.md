@@ -292,25 +292,21 @@ why only use x[:, 0, :]
 
 用Flickr-Faces-HQ Dataset.
 
-Understand the following implementation and how does this compare to autoencoders? (3 points)
+##### 和 autoencoders 区别? (3 points)
 
 与标准自动编码器相比，VAE 具有额外的概率组件，可以更有效地对潜在空间进行采样并生成新数据。
 
 VAE 与标准自动编码器的不同之处在于，它们向编码器网络添加了一个概率元素，其中编码器的输出表示潜在空间的概率分布，而不是固定编码。
 
-Then, we need to sample a latent vector from the normal distribution正态分布,  using a simple reparametrization trick . This trick is important in order be able to backpropagate the gradients back to the encoder. 
+#### VAE怎么写?
 
-Finally, we use a decoder network that generate an image given a latent vector. 值得注意 VAEs still care about the mean squared error between the generated image and the real one (as in autoencoders), therefore the ideal output of a VAE is the average image over all plausible ones.
+we need to sample a latent vector from 正态分布,  using a simple reparametrization trick. This trick is important 为了梯度回传 to the encoder. 
 
-mean = torch.Size([2, 256]) 
+最后用decoder产生图片根据given a latent vector. 值得注意的是VAEs still care about the mean squared error between the generated image and the real one (as in autoencoders), therefore the ideal output of a VAE is the average image over all plausible ones.
 
-logvar = torch.Size([2, 256])  
+用frechet距离 between 两个高斯分布来评估. 第一个是数据集, 第二个是我们的样本. work on 提取出的特征. 
 
-outputs= torch.Size([2, 3, 128, 128]) 这合理吗? 
-
-用frechet 距离 between 两个高斯分布来评估. 第一个是数据集, 第二个是我们的样本. work on 提取出的特征. 
-
-重建损失计算为 VAE 输出与原始输入图像之间的均方误差。正则化损失是使用学习概率分布和标准正态分布之间的 KL 散度计算的，这鼓励学习分布与先验分布相匹配。
+重建损失计算为 VAE 输出与原始输入图像之间的均方误差。正则化损失是使用学习概率分布和标准正态分布之间的 KL 散度计算的，这鼓励学习分布与先验分布相匹配。它通过正则化模型和降低潜在表示的复杂性来帮助防止过度拟合。
 
 #### Task2
 
@@ -318,11 +314,11 @@ outputs= torch.Size([2, 3, 128, 128]) 这合理吗?
 
  factor = latent_dim / image_size
 
-beta 参数控制正则化项的强度，并乘以一个取决于输入图像大小和潜在空间维数的因子。需要乘以该因子以确保正则化项相对于重建损失适当缩放。
+因为 beta 参数控制正则化项的强度，并乘以一个取决于输入图像大小和潜在空间维数的因子。需要乘以该因子以确保正则化项相对于重建损失适当缩放。
 
-用 frechet distance.计算两个多变量高斯分布的距离. 用多变量normal 来fit 高斯分布,也会给label fit一个高斯分布, 然后计算距离.
+用 frechet distance.计算两个多变量高斯分布的距离. 用多变量normal 来fit 高斯分布,也会给label fit一个高斯分布, 计算距离.
 
-fid 256 的sota只有个位数, 我fid128数据集上训练 600多 距离.
+fid 256 的sota只有个位数, fid128数据集上训练 600多 距离.
 
 #### task3
 
@@ -340,7 +336,7 @@ weight变成 `[count, 1, 1]` tensor are broadcasted to match the dimensions of t
 
 图像是1x 32x32
 
-不会显示建模数据分布. 没有把image encoder 到latent vector.
+不会显示建模数据分布. 没有把image encode到 latent vector.
 
 用discriminator 辨别器,来指导decoder, 也就是生成器. 
 
@@ -350,24 +346,16 @@ D(x) 是一个二分图分类, 判断真还是假. 把生成的作为假样本.
 
 1. 顶部分支的输入是什么（大小为100的向量）？ 顶部分支的输入是一个100维的均匀分布Z，通常被称为 "潜在向量"。这个向量作为生成器的随机性来源，它被用来合成一个可以骗过判别器的图像。
 
-2. 底部输入大小为num_classes的单热编码标签向量。这个向量提供了一个条件性标签，指导生成器的生成过程。条件性GANs背后的想法是将生成器的条件放在一些特定的类信息上，这样它就能生成属于某个特定类的图像。
+2. 底部输入大小为num_classes的单热编码标签向量。这个向量提供了一个条件性标签，指导生成器的生成过程。条件性GANs背后的想法是将生成器的条件放在一些特定的类信息上，**生成属于某个特定类的图像**。
 
-3. 嵌入层将one hot编码的标签向量映射为特定大小的密集连续向量。这一层的目的是为每个类别学习一个有意义的嵌入，这可以帮助生成器更好地理解标签的基本语义。换句话说，嵌入层帮助生成器将特定的特征与特定的类联系起来。嵌入层的输出与潜伏向量相连接，作为生成器的输入。
-4. 通过将每层的特征图的高度和宽度增加一倍，生成器能够产生更高分辨率的图像。
+3. 嵌入层将one hot编码的标签向量映射为特定大小的密集连续向量。这一层的目的是为每个类别学习一个有意义的嵌入，这可以帮助生成器更好地理解标签的基本语义。换句话说，嵌入层帮助生成器将特定的特征与特定的类联系起来。
+4. transpose conv 通过将每层的特征图的高度和宽度增加一倍，生成器能够产生更高分辨率的图像。
 
-转置卷积（也称为反卷积）是一种可用于对张量进行上采样的卷积运算。它与常规卷积运算相反，后者对张量进行下采样。
+transpose conv 是一种可用于对张量进行上采样的卷积运算。它与常规卷积运算相反. 
 
-在 GAN 生成器的上下文中，转置卷积用于逐渐增加特征图的空间分辨率。特别是，生成器中的转置卷积将形状为张量作为输入`[batch_size, channels, height, width]`并产生形状为 的张量`[batch_size, channels/2, height*2, width*2]`。通过将每一层特征图的高度和宽度加倍，生成器能够生成更高分辨率的图像。
+在 GAN 生成器的上下文中，转置卷积用于逐渐增加特征图的空间分辨率。特别是，生成器中的转置卷积将形状为张量作为输入`[batch_size, channels, height, width]`并产生`[batch_size, channels/2, height*2, width*2]`。通过将每一层特征图的高度和宽度加倍，生成器能够生成更高分辨率的图像。
 
-总之，转置卷积在 GAN 的生成器中起着关键作用，它允许生成具有更高分辨率和更细粒度细节的图像。
-
-
-
-(N x N) * (F x F) = (N-F+1)x(N-F+1)  普通卷积https://towardsdatascience.com/covolutional-neural-network-cb0883dd6529
-
-p = (F-1)/2 时,    输入和输出一样大小, 
-
-如果步长 > 1, 那要除步长. 
+conv 的图像变小:  $ \frac{n-f+2p}{s} +1https://pytorchbook.cn/chapter2/2.4-cnn/
 
 #### task2
 
@@ -378,27 +366,23 @@ p = (F-1)/2 时,    输入和输出一样大小,
 RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 7 but got size 8 for tensor number 1 in the list.要resize 到32  x32
 ```
 
-z是正态分布, Gz , 生成后. 
+ BCE内部有sigmoid.
 
-D(x)   应该用sigmoid, 然后让他接近1 . BCE内部有sigmoid.
-
-D(g(z)) 应该接近0 . 
-
-但是latent vector不是BatchSize * 100的形状吗? 为什么能变过去 4 x 512 x512? 为啥unflatten 就可以。 
+但是latent vector不是BatchSize , 100  ,1 , 1的形状吗? 为什么能变过去 4 x 512 x512? 为啥unflatten 就可以。 
 
 #### 分辨器
 
 1. what is the usage of the discriminator? 
 
-guide the decoder (here called the generator  to generate samples that are closer to the real distribution. 
+指导generator 产生更接近实际分布的sample.
 
 2. what is the output of the discriminator?
 
 binary image classifer with a single scalar output classifying whether an input image is real or fake (generated).
 
-#### 网络inversion
+#### task3网络inversion
 
-在latent vector上做梯度下降.
+GAN没有encoder, 把generator反过来 产生latent vector. 就是一个随机的z 梯度下降.对于image 计算reconstruction loss MSE. 
 
 #### bonus对抗攻击
 
@@ -409,4 +393,12 @@ Fast Sign Gradient Method (FGSM)
 Untargeted, 最大化loss .
 
 bird, 会变成frog ,攻击比较难. frog可以攻击成功. trunk可以攻击成bird.
+
+#### 问题
+
+6.5分.   问VAE原理， GAN的原理。encoder干嘛的， decoder干嘛的。
+
+插值是怎么插入的? 
+
+encoder 输出是啥, decoder输出是啥. 
 
