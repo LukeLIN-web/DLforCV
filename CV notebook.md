@@ -16,19 +16,48 @@ pip install jupyter_http_over_ws  # for Google Colab
 jupyter serverextension enable --py jupyter_http_over_ws  # Google Colab
 ```
 
-会有问题, np.object弃用了. numpy1.24会出问题. Np.bool ,  tensorboard 源码  conda是垃圾. 能不用就不用.  感觉应该安装比较新的tensorboard. 不要管低版本, 都用高版本就行.
+会有问题, np.object弃用了. numpy1.24会出问题. Np.bool ,  tensorboard 源码  conda是垃圾. 能不用就不用.  应该安装比较新的tensorboard. 不要管低版本, 都用高版本就行.
 
 project4要用tensorboard. docker容器要映射网络端口出去. 
 
 pip install tensorboard. conda会无法识别. [ No module named ‘tensorboard’](https://discuss.pytorch.org/t/tensorboard-in-virtualenvironment-no-module-named-tensorboard/77864) 
 
 ```
-mamba install python=3.9.2 pytorch==1.9.0 torchvision==0.10.0 torchaudio==0.9.0 cudatoolkit=11.3 matplotlib=3.3.4 tqdm=4.59.0 tensorboard=2.4.1 numpy=1.23 ipykernel -c pytorch -c conda-forge
+mamba install python=3.9.2 pytorch==1.8.1 torchvision==0.9.1  torchaudio==0.8.1 cudatoolkit=11.1.1 matplotlib=3.3.4 tqdm=4.59.0 tensorboard=2.4.1 numpy=1.23.2 ipykernel==6.19.2 -c pytorch -c conda-forge
 ```
 
 助教用的是` pytorch1.10.2+python3.9.7+tensorboard2.8+numpy1.21.2`
 
 其实不用tensorboard也行, 就是图很多. 
+
+conda/mamba装pytorch还得指定build, 否则给你装个cpu版的.
+
+要不全pip装最新版的试试.  还是有问题https://github.com/pyvista/pyvista/issues/4380
+
+```
+mamba install h5py=2.10.0 -c conda-forge
+mamba install pandas -c conda-forge -y
+mamba install scikit-learn -c conda-forge -y
+
+mamba install tensorboard
+
+不要用notebook配环境, 把import 提取出来运行python比较快, notebook 每次换了环境都要重启很慢. 
+pip3 install torch torchvision torchaudio
+pip install notebook
+pip install ipykernel
+pip install tqdm
+pip install h5py
+pip install pandas
+pip install -U scikit-learn
+pip install tensorboard
+pip install pyvista==0.35.2
+
+python -m pip freeze  # to see all packages installed in the active virtualenv
+```
+
+mamba 默默地就把之前安装的torch vision 不断升级, 把torch升级到2.0了. 
+
+
 
 ## Assignment1
 
