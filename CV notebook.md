@@ -6,6 +6,8 @@
 
 vscode 双击就可以折叠cell. 还可以用outline. vscode新装了软件之后记得reload window, 不然很多识别不出来. 
 
+他会仔细看每一行代码的,写错了也扣分. 所以要认真写不能直接抄chatgpt 能跑就行. 可惜之前一直都不知道以为acc一样就行. 
+
 #### 环境
 
 ```
@@ -14,6 +16,7 @@ conda create -n cs323 python=3.9.2 -y
 conda activate cs323
 pip install jupyter_http_over_ws  # for Google Colab
 jupyter serverextension enable --py jupyter_http_over_ws  # Google Colab
+jupyter notebook --ip  172.18.0.47 --allow-root
 ```
 
 会有问题, np.object弃用了. numpy1.24会出问题. Np.bool ,  tensorboard 源码  conda是垃圾. 能不用就不用.  应该安装比较新的tensorboard. 不要管低版本, 都用高版本就行.
@@ -26,9 +29,9 @@ pip install tensorboard. conda会无法识别. [ No module named ‘tensorboard�
 mamba install python=3.9.2 pytorch==1.8.1 torchvision==0.9.1  torchaudio==0.8.1 cudatoolkit=11.1.1 matplotlib=3.3.4 tqdm=4.59.0 tensorboard=2.4.1 numpy=1.23.2 ipykernel==6.19.2 -c pytorch -c conda-forge
 ```
 
-助教用的是` pytorch1.10.2+python3.9.7+tensorboard2.8+numpy1.21.2`
+助教用的是` pytorch1.10.2+python3.9.7+tensorboard2.8+numpy1.21.2` 用了这个好像可以了. 
 
-其实不用tensorboard也行, 就是图很多. 
+其实不用tensorboard也行, 就是图很多.  project5必须用. 
 
 conda/mamba装pytorch还得指定build, 否则给你装个cpu版的.
 
@@ -43,19 +46,117 @@ mamba install tensorboard
 
 不要用notebook配环境, 把import 提取出来运行python比较快, notebook 每次换了环境都要重启很慢. 
 pip3 install torch torchvision torchaudio
-pip install notebook
-pip install ipykernel
+pip install jupyter
 pip install tqdm
 pip install h5py
 pip install pandas
 pip install -U scikit-learn
-pip install tensorboard
+pip install tensorboard==2.8.0
 pip install pyvista==0.35.2
+
+
 
 python -m pip freeze  # to see all packages installed in the active virtualenv
 ```
 
 mamba 默默地就把之前安装的torch vision 不断升级, 把torch升级到2.0了. 
+
+#### tensorboard
+
+2.13会出问题. 
+
+```
+ERROR: Failed to launch TensorBoard (exited with 255).
+Contents of stderr:
+TensorFlow installation not found - running with reduced feature set.
+/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.29' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
+/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.33' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
+/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.28' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
+/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.34' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
+/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.32' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
+E0506 14:17:48.001254 140199180390976 program.py:298] Tensorboard could not bind to unsupported address family ::
+ERROR: Tensorboard could not bind to unsupported address family ::
+No known TensorBoard instances running.
+```
+
+试试老一点的tensorboard可不可以用2.27
+
+2.4.1不行, 2.8.0也不行. 
+
+```
+TypeError                                 Traceback (most recent call last)
+/tmp/ipykernel_5924/3843205825.py in <module>
+     20 import torch.nn.functional as F
+     21 from torch.utils.data import Dataset, DataLoader
+---> 22 from torch.utils.tensorboard import SummaryWriter
+     23 from torch.utils.collect_env import get_pretty_env_info
+     24 
+
+/opt/conda/lib/python3.8/site-packages/torch/utils/tensorboard/__init__.py in <module>
+      8 del tensorboard
+      9 
+---> 10 from .writer import FileWriter, SummaryWriter  # noqa: F401
+     11 from tensorboard.summary.writer.record_writer import RecordWriter  # noqa: F401
+
+/opt/conda/lib/python3.8/site-packages/torch/utils/tensorboard/writer.py in <module>
+      7 
+      8 from tensorboard.compat import tf
+----> 9 from tensorboard.compat.proto.event_pb2 import SessionLog
+     10 from tensorboard.compat.proto.event_pb2 import Event
+     11 from tensorboard.compat.proto import event_pb2
+
+/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/event_pb2.py in <module>
+     15 
+     16 
+---> 17 from tensorboard.compat.proto import summary_pb2 as tensorboard_dot_compat_dot_proto_dot_summary__pb2
+     18 
+     19 
+
+/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/summary_pb2.py in <module>
+     15 
+     16 
+---> 17 from tensorboard.compat.proto import tensor_pb2 as tensorboard_dot_compat_dot_proto_dot_tensor__pb2
+     18 
+     19 
+
+/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/tensor_pb2.py in <module>
+     14 
+     15 
+---> 16 from tensorboard.compat.proto import resource_handle_pb2 as tensorboard_dot_compat_dot_proto_dot_resource__handle__pb2
+     17 from tensorboard.compat.proto import tensor_shape_pb2 as tensorboard_dot_compat_dot_proto_dot_tensor__shape__pb2
+     18 from tensorboard.compat.proto import types_pb2 as tensorboard_dot_compat_dot_proto_dot_types__pb2
+
+/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/resource_handle_pb2.py in <module>
+     14 
+     15 
+---> 16 from tensorboard.compat.proto import tensor_shape_pb2 as tensorboard_dot_compat_dot_proto_dot_tensor__shape__pb2
+     17 from tensorboard.compat.proto import types_pb2 as tensorboard_dot_compat_dot_proto_dot_types__pb2
+     18 
+
+/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/tensor_shape_pb2.py in <module>
+     34   containing_type=None,
+     35   fields=[
+---> 36     _descriptor.FieldDescriptor(
+     37       name='size', full_name='tensorboard.TensorShapeProto.Dim.size', index=0,
+     38       number=1, type=3, cpp_type=2, label=1,
+
+/opt/conda/lib/python3.8/site-packages/google/protobuf/descriptor.py in __new__(cls, name, full_name, index, number, type, cpp_type, label, default_value, message_type, enum_type, containing_type, is_extension, extension_scope, options, serialized_options, has_default_value, containing_oneof, json_name, file, create_key)
+    559                 has_default_value=True, containing_oneof=None, json_name=None,
+    560                 file=None, create_key=None):  # pylint: disable=redefined-builtin
+--> 561       _message.Message._CheckCalledFromGeneratedFile()
+    562       if is_extension:
+    563         return _message.default_pool.FindExtensionByName(full_name)
+
+TypeError: Descriptors cannot not be created directly.
+If this call came from a _pb2.py file, your generated code is out of date and must be regenerated with protoc >= 3.19.0.
+If you cannot immediately regenerate your protos, some other possible workarounds are:
+ 1. Downgrade the protobuf package to 3.20.x or lower.
+ 2. Set PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python (but this will use pure-Python parsing and will be much slower).
+
+More information: https://developers.google.com/protocol-buffers/docs/news/2022-05-06#python-updates
+```
+
+
 
 
 
@@ -430,4 +531,113 @@ bird, 会变成frog ,攻击比较难. frog可以攻击成功. trunk可以攻击�
 插值是怎么插入的? 
 
 encoder 输出是啥, decoder输出是啥. 
+
+添加base 64的encoder实在是恶心.
+
+ https://ealizadeh.com/blog/3-ways-to-add-images-to-your-jupyter-notebook/
+
+```
+<img src = " "/>
+```
+
+## project5
+
+40 类. 
+
+### pointnet
+
+第一步是输入和特征转换，它使用了一个T-Net和矩阵乘法。
+
+第二步是对每个点独立应用一个共享的多层感知器（MLP）。这个MLP由几个具有ReLU激活函数的全连接层组成，这使得网络能够学习从输入空间到特征空间的非线性映射。
+
+ PointNet  maxpooling  计算出集合中所有点的每个特征的最大值，从而形成一个固定长度的全局特征向量.
+
+最后，这个全局特征向量通过另一个MLP来产生整个输入的类别标签或输入的每个点的分段/部分标签。
+
+
+
+no bias in norm? 
+
+当批量归一化 (BatchNorm) 应用于神经网络中的一个层时，它具有移动和缩放归一化激活的能力，从而有效地发挥偏差项的作用。BatchNorm 计算输入批次的均值和方差，并使用它们对激活进行归一化，这有助于网络的训练稳定性和泛化性。**training stability and generalization.**
+
+网络可以在**参数数量方面更加高效** less parameter，并且可以实现更好的性能。 better performance
+
+此外，在 BatchNorm 旁边包含偏差项可能会导致归一化效果的损失。学习到的偏差项可以抵消归一化操作，导致性能不佳。
+
+point cloud和 voxels 有什么利弊? 
+
+1. 体素：体素是体积像素的缩写，是 2D 像素的 3D 对应物.  它们提供 3D 空间的结构化表示，但对于高分辨率网格来说可能会占用大量内存且计算量大。 More memory , computation . 
+2. 点云：点云可以灵活高效地表示复杂的几何形状和捕获精细的细节。它们广泛用于 3D 对象识别、配准、重建和机器人技术等应用。
+
+体素提供了 3D 空间的结构化表示，规则网格允许轻松index , query 和处理数据,   Volume-based operations easy,  而点云则在捕获和表示详细几何体方面提供了灵活性和效率。less mmeory , 
+
+lr shcduler 的用处?
+
+fast convergence, generalization, Handling noisy, Robustness to changes in data 
+
+ 20个epoch  lr 乘上0.5. depend `scheduler.step()` which loop , 放在iteration循环就是20个iteration.
+
+recall weighted 和mean区别.   weighted是乘什么?  each class frequency . 
+
+message passing怎么做的? 
+
+neighbor point,  using an asymmetric edge function that combines global shape structure captured  xi with local neighborhood information captured by xj − xi. This process is performed iteratively for multiple message passing steps to allow for information refinement and integration from distant points.
+
+怎么找?  knn 来找算distance .
+
+不用knn怎么定义?
+
+ 基于半径的邻域：根据点周围的半径radius 来定义点的邻域，指定半径内的点被视为相邻点。这种方法允许基于点云中点的密度或分布的可变邻域大小。
+
+ max pooling 怎么操作? 
+
+selects **the most informative features from each point** and aggregates them into a single vector. maxpooling, 对顺序不敏感. 
+
+why it use linear in not shared ?shared 用Conv1d . 为什么?
+
+当`shared`设置为时`False`，表示输入是全局特征global feature 。 MLP 将输入视为单个数据点，并`nn.Linear`使用常规线性层 ( ) 来处理输入。线性层接受输入并应用线性变换 linear transformation 以产生输出。
+
+另一方面，当`shared`设置为时`True`，表示输入是点云。在这种情况下，MLP 对每个点独立应用相同的线性变换。为实现这一点，代码使用`nn.Conv1d`核大小为 1 的一维卷积层 ( )。一维卷积层将点云中的每个点point 视为一个单独的通道，并对每个通道应用相同的权重。treats each point in the point cloud as a separate channel, and the same weights are applied to each channel. 
+
+why it need scale and shift?
+
+1. 缩放向量在[2/3, 3/2]之间均匀采样。通过将缩放向量逐元素乘以点云，该函数沿每个维度 (x, y, z) 重新缩放点云。scaling operation can help **introduce variability and augment the data during training.**
+2. 移位：移位向量在[-0.2, 0.2]之间均匀采样。该函数将移位向量按元素添加到缩放点云中。这种移动操作沿每个维度平移整个点云。与缩放类似，移动会引入变化并扰乱点云的位置。Similar to scaling, shifting can **introduce variation and perturb the point cloud's position**
+
+这些缩放和移动操作应用于整个点云，确保变换在所有点上都是一致的。提高模型概括和处理输入点云变化的能力。 **augment the data and increase its diversity,  improving the model's ability to generalize and handle variations in input point clouds.**
+
+`torch.randperm`，该函数使用随机化顺序随机化点云中的点。防止模型依赖点的顺序并鼓励它学习空间不变的表示。
+
+#### relu的区别
+
+ReLU 将负值设置为零，LeakyReLU 为负值引入一个小斜率，而 PReLU 允许在训练期间学习斜率。 ReLU 显示vanishing gradient等问题，则从 ReLU 开始并考虑将 LeakyReLU 作为替代方案.
+
+#### CLIP
+
+without any labelling. 
+
+pointclip是怎么弄的? 
+
+3d  project onto multi-view 2d depth maps,  visual encoder, get multi-view feature .   
+
+Produce multi-view prediction.  
+
+ few shot和zero shot 是怎么实现的?  few shot是用switch ,  inter-view adapter lets  model can quickly adapt to new classes with limited labeled data. 
+a known class就是off, 如果new class with limited labeled examples, the switch is turned on, and the adapter module is activated to adapt the encoders specifically for that new class. 
+
+ zero shot是用一个image 放进去看和哪个text最接近.  不会经过inter view adapter. 因为没有label.
+
+这个矩阵是什么意思? 
+
+计算图像特征和文本特征之间的余弦相似度，产生类的概率分布。 calculates the cosine similarity between the image features and the text features, producing a **probability distribution over the classes.**
+
+`top_probs` 和 `top_labels` , 通过使用 沿着最后一个维度选择最高值来分别存储前 k 个概率和相应的标签`text_probs.cpu().topk(5, dim=-1)`。
+
+不需要每层都dropout. activation  only once. 
+
+DLL 写错了很多还是acc很高. 助教说 That is the deep learning. 
+
+不能LR, 只训练10个epoch
+
+ 
 
