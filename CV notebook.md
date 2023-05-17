@@ -53,9 +53,6 @@ pip install pandas
 pip install -U scikit-learn
 pip install tensorboard==2.8.0
 pip install pyvista==0.35.2
-
-
-
 python -m pip freeze  # to see all packages installed in the active virtualenv
 ```
 
@@ -63,102 +60,7 @@ mamba 默默地就把之前安装的torch vision 不断升级, 把torch升级到
 
 #### tensorboard
 
-2.13会出问题. 
-
-```
-ERROR: Failed to launch TensorBoard (exited with 255).
-Contents of stderr:
-TensorFlow installation not found - running with reduced feature set.
-/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.29' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
-/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.33' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
-/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.28' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
-/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.34' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
-/opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.32' not found (required by /opt/conda/lib/python3.8/site-packages/tensorboard_data_server/bin/server)
-E0506 14:17:48.001254 140199180390976 program.py:298] Tensorboard could not bind to unsupported address family ::
-ERROR: Tensorboard could not bind to unsupported address family ::
-No known TensorBoard instances running.
-```
-
-试试老一点的tensorboard可不可以用2.27
-
-2.4.1不行, 2.8.0也不行. 
-
-```
-TypeError                                 Traceback (most recent call last)
-/tmp/ipykernel_5924/3843205825.py in <module>
-     20 import torch.nn.functional as F
-     21 from torch.utils.data import Dataset, DataLoader
----> 22 from torch.utils.tensorboard import SummaryWriter
-     23 from torch.utils.collect_env import get_pretty_env_info
-     24 
-
-/opt/conda/lib/python3.8/site-packages/torch/utils/tensorboard/__init__.py in <module>
-      8 del tensorboard
-      9 
----> 10 from .writer import FileWriter, SummaryWriter  # noqa: F401
-     11 from tensorboard.summary.writer.record_writer import RecordWriter  # noqa: F401
-
-/opt/conda/lib/python3.8/site-packages/torch/utils/tensorboard/writer.py in <module>
-      7 
-      8 from tensorboard.compat import tf
-----> 9 from tensorboard.compat.proto.event_pb2 import SessionLog
-     10 from tensorboard.compat.proto.event_pb2 import Event
-     11 from tensorboard.compat.proto import event_pb2
-
-/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/event_pb2.py in <module>
-     15 
-     16 
----> 17 from tensorboard.compat.proto import summary_pb2 as tensorboard_dot_compat_dot_proto_dot_summary__pb2
-     18 
-     19 
-
-/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/summary_pb2.py in <module>
-     15 
-     16 
----> 17 from tensorboard.compat.proto import tensor_pb2 as tensorboard_dot_compat_dot_proto_dot_tensor__pb2
-     18 
-     19 
-
-/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/tensor_pb2.py in <module>
-     14 
-     15 
----> 16 from tensorboard.compat.proto import resource_handle_pb2 as tensorboard_dot_compat_dot_proto_dot_resource__handle__pb2
-     17 from tensorboard.compat.proto import tensor_shape_pb2 as tensorboard_dot_compat_dot_proto_dot_tensor__shape__pb2
-     18 from tensorboard.compat.proto import types_pb2 as tensorboard_dot_compat_dot_proto_dot_types__pb2
-
-/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/resource_handle_pb2.py in <module>
-     14 
-     15 
----> 16 from tensorboard.compat.proto import tensor_shape_pb2 as tensorboard_dot_compat_dot_proto_dot_tensor__shape__pb2
-     17 from tensorboard.compat.proto import types_pb2 as tensorboard_dot_compat_dot_proto_dot_types__pb2
-     18 
-
-/opt/conda/lib/python3.8/site-packages/tensorboard/compat/proto/tensor_shape_pb2.py in <module>
-     34   containing_type=None,
-     35   fields=[
----> 36     _descriptor.FieldDescriptor(
-     37       name='size', full_name='tensorboard.TensorShapeProto.Dim.size', index=0,
-     38       number=1, type=3, cpp_type=2, label=1,
-
-/opt/conda/lib/python3.8/site-packages/google/protobuf/descriptor.py in __new__(cls, name, full_name, index, number, type, cpp_type, label, default_value, message_type, enum_type, containing_type, is_extension, extension_scope, options, serialized_options, has_default_value, containing_oneof, json_name, file, create_key)
-    559                 has_default_value=True, containing_oneof=None, json_name=None,
-    560                 file=None, create_key=None):  # pylint: disable=redefined-builtin
---> 561       _message.Message._CheckCalledFromGeneratedFile()
-    562       if is_extension:
-    563         return _message.default_pool.FindExtensionByName(full_name)
-
-TypeError: Descriptors cannot not be created directly.
-If this call came from a _pb2.py file, your generated code is out of date and must be regenerated with protoc >= 3.19.0.
-If you cannot immediately regenerate your protos, some other possible workarounds are:
- 1. Downgrade the protobuf package to 3.20.x or lower.
- 2. Set PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python (but this will use pure-Python parsing and will be much slower).
-
-More information: https://developers.google.com/protocol-buffers/docs/news/2022-05-06#python-updates
-```
-
-
-
-
+2.13会出问题.   试试老一点的tensorboard可不可以用2.27 , 2.4.1不行, 2.8.0也不行. 
 
 ## Assignment1
 
@@ -638,6 +540,3 @@ a known class就是off, 如果new class with limited labeled examples, the switc
 DLL 写错了很多还是acc很高. 助教说 That is the deep learning. 
 
 不能LR, 只训练10个epoch
-
- 
-
