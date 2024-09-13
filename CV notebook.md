@@ -1,12 +1,8 @@
-
-
 运行前先activate conda 环境
 
 在服务器上运行`jupyter notebook --ip 服务器ip地址`  就可以查看服务器上的ipynb 文件了. 
 
 vscode 双击就可以折叠cell. 还可以用outline. vscode新装了软件之后记得reload window, 不然很多识别不出来. 
-
-他会仔细看每一行代码的,写错了也扣分. 所以要认真写不能直接抄chatgpt 能跑就行. 可惜之前一直都不知道以为acc一样就行. 
 
 #### 环境
 
@@ -33,7 +29,7 @@ mamba install python=3.9.2 pytorch==1.8.1 torchvision==0.9.1  torchaudio==0.8.1 
 
 其实不用tensorboard也行, 就是图很多.  project5必须用. 
 
-conda/mamba装pytorch还得指定build, 否则给你装个cpu版的.
+conda/mamba装pytorch还得指定build, 否则给你装个cpu版的. 不要用conda安装任何东西, conda只用来隔离环境. 
 
 要不全pip装最新版的试试.  还是有问题https://github.com/pyvista/pyvista/issues/4380
 
@@ -58,9 +54,18 @@ python -m pip freeze  # to see all packages installed in the active virtualenv
 
 mamba 默默地就把之前安装的torch vision 不断升级, 把torch升级到2.0了. 
 
+#### 分类器
+
+多folds, try each fold as validation set.  useful for small datasets,但是DL用的很少. 因为有很多数据了. 
+
+Nonparametric method: 并不是说没有参数, 而是不依赖数据服从某种特定分布,模型的复杂度通常随着数据量的增加而增加 ,  比如 核密度估计 Kernel Density Estimation, K-NN. 
+
+k-NN, images不用了, 因为test 的时候太慢.
+
+
 #### tensorboard
 
-2.13会出问题.   试试老一点的tensorboard可不可以用2.27 , 2.4.1不行, 2.8.0也不行. 
+2.13会出问题, 2.4.1不行, 2.8.0也不行. 
 
 ## Assignment1
 
@@ -118,9 +123,7 @@ To add regularization to a PyTorch neural network model, you can use various tec
 
 #### pooling
 
-你就可以理解为卷积核每空两格做一次卷积，卷积核的大小是2x2， 但是卷积核的作用是取这个核里面最大的值（即特征最明显的值），而不是做卷积运算
-
-减小计算量, 学习特征. 
+类似 卷积核, 每空两格做一次卷积，卷积核的大小是2x2， 但是卷积核的作用是取这个核里面最大的值（即特征最明显的值），而不是做卷积运算.
 
 多加一层    nn.Conv2d(256, 256, kernel_size=3, padding=1),
 
@@ -136,7 +139,7 @@ To add regularization to a PyTorch neural network model, you can use various tec
 
 #### 数据增强
 
-notebook修改了之后要找到第一次定义的cell 重新往下运行, 不能从中间运行. 不然会很奇怪. 
+notebook修改了之后要找到第一次定义的cell 重新往下运行, 不能从中间运行. 不然会出错. 
 
 #### 验收
 
@@ -146,15 +149,13 @@ notebook修改了之后要找到第一次定义的cell 重新往下运行, 不�
 
 为什么用torch.ones_like(ys)? 因为要归一化? 听不懂
 
-为什么要nn.Module? 因为要维护parameter list. 它这个都是唯一答案非常恶心. 
+为什么要nn.Module? 因为要维护parameter list. 
 
 用的是什么loss? criterion=nn.MSELoss()
 
 用的是什么dataset?  hog 数据集.
 
 要仔细把notebook读一遍背诵一下. 
-
-不需要运行
 
 ## Assignment2
 
@@ -168,7 +169,7 @@ num_classes = 3
 2. F1 分数：这是评估对象检测和分割模型的另一个常用指标。它衡量模型的准确率和召回率之间的平衡，定义为准确率和召回率的调和平均值。
 3. 准确性：该指标衡量正确分类对象的比例，通常用于分类任务。
 
-选择指标时，重要的是要考虑它应该是训练指标还是验证指标。训练指标衡量模型在训练数据上的表现，而验证指标衡量模型在保留验证集上的表现。通常，建议使用验证指标，因为这可以更准确地衡量模型的泛化性能。但是，在训练期间跟踪训练指标以监视模型的进度并检测潜在问题（例如过度拟合）也很有用。
+通常，建议使用验证指标，因为这可以更准确地衡量模型的泛化性能。但是，在训练期间跟踪训练指标以监视模型的进度并检测潜在问题（例如过度拟合）也很有用。
 
 ### confusion matrix
 
@@ -176,7 +177,7 @@ num_classes = 3
 
 是猫, 预测是狗, false negative.  type I error
 
-是狗, 预测是猫, false positive.   type 2 error.
+是狗, 预测是猫, false positive.   type 2 error
 
 是狗, 预测不是狗, true negative. 
 
@@ -188,7 +189,7 @@ recall: TP/ (TP+FN)   预测猫对的/  **是猫的数量**
 
 precision相当于查准，可以理解为“我 预测是猫中有多少是对的”
 
-召回率相当于查全，可以理解为猫中，我下载到了多少”
+召回率可以理解为 所有猫中，我predict 对了多少.
 
 F.cross_entropy(x, y, w) 需要传入weight,  因为 standard cross-entropy loss function may be biased towards the majority class, 
 
@@ -206,7 +207,7 @@ miinst clutter dataset.
 
 #### part1
 
-penn fudan, 只考虑行人和background.   image和mask是pil 格式. 
+image和mask是pil 格式. 
 
 mask是instance segmentation, 我们要改成semantic segment.
 
@@ -227,8 +228,6 @@ upsampling, 用 un pooling , or deconv. deconv一般效果比较好.
 Transpose2d会增加分辨率, deconv.   **interpolation**
 
  kernel size of 2x2. 1一个像素变 2x2 output feature map. 
-
-训练了fudan
 
 [1,2]weight,  0.66 loss, 变成0.56.  [1,1,] loss好像更小了. recall更小了,  metric都变差了. 
 
@@ -280,7 +279,7 @@ GRU   计算更快. batch_first=True 这样可以输入batch放前面他内部�
 
 ### part2
 
-cifar10, 训练的到53上不去了. batch size变大,  hidden size变大. 
+cifar10, 训练的到53上不去了. 试试 batch size变大,  hidden size变大. 
 
 把图分成16x16patches. So total 256 tokens.
 
@@ -296,7 +295,7 @@ why only use x[:, 0, :]
 
 简而言之，注意力只是一种权衡每个序列元素对其他序列元素影响的方法。例如，在视觉变换器（ViT）中，输入图像被裁剪成16x16像素的斑块，作为一个序列传递给网络（每个斑块都是一个序列元素，斑块在原始图像中的位置作为位置编码）。这样一来，每个补丁都可以从第一层开始关注其他每个补丁。感受区是整个图像，注意力权重矩阵直观地代表了每个斑块对其他斑块进行图像分类的重要性（回顾一下，注意力矩阵的大小是$N\times N$）。
 
-我们实质上是从序列中提取此 . 序列中的第一个patch,通过一个layer来预测. 
+我们实质上是从序列中提取此序列中的第一个patch,通过一个layer来预测. 
 
 位置编码用于基于 Transformer 的模型，以添加有关每个标记在输入序列中的位置的信息。由于这些模型没有任何固有的词序或位置概念，因此这些附加信息对于模型准确处理输入序列是必需的。
 
@@ -455,8 +454,6 @@ encoder 输出是啥, decoder输出是啥.
  PointNet  maxpooling  计算出集合中所有点的每个特征的最大值，从而形成一个固定长度的全局特征向量.
 
 最后，这个全局特征向量通过另一个MLP来产生整个输入的类别标签或输入的每个点的分段/部分标签。
-
-
 
 no bias in norm? 
 
