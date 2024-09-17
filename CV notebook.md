@@ -1,3 +1,11 @@
+
+
+20% review. 80% project.
+
+
+
+
+
 运行前先activate conda 环境
 
 在服务器上运行`jupyter notebook --ip 服务器ip地址`  就可以查看服务器上的ipynb 文件了. 
