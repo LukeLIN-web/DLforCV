@@ -1,6 +1,30 @@
+20%  paper review. 
 
+proposal 5%  Two pages (plus bibliography),due 10/14/24•
 
-20% review. 80% project.
+(20% grade) Paper Presentation:A (max) 15 slides presentation of related paper.10/22/24-10/31/24  paper pre 20% . Teams of three students present a paper related to their proposed project
+
+•(20% grade) Presentation:A (max) 15 slides presentation of theproject.11/26/24-12/10/24
+
+project report,  35%  ONE report in 2025 CVPR format (8 pagesdouble column + references),
+
+#### Review
+
+Read and write a review for [ImageNetChallenge]
+
+Review Format
+• Please type ONE to TWO pages with (in this order):
+• Reviewer: your name and the date
+• Citation: Paper title, authors, year, and publication citation
+• A one paragraph with a brief summary of the paper
+• State what is the main contribution of the paper
+• A list of bullets with Strengths and Weaknesses
+• More detailed explanation of the strengths and weaknesses
+• Comments about the experiments. Are they convincing?
+• How could the work be extended?
+• Additional comments, including unclear points, open research questions and applications.
+
+weakness 可以搜索别人的review, openreview.
 
 
 
