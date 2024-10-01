@@ -10,7 +10,7 @@ project report,  35%  ONE report in 2025 CVPR format (8 pagesdouble column + ref
 
 #### Review
 
-Read and write a review for [ImageNetChallenge]
+you dont have to write every section point wise.  
 
 Review Format
 • Please type ONE to TWO pages with (in this order):
@@ -20,7 +20,7 @@ Review Format
 • State what is the main contribution of the paper
 • A list of bullets with Strengths and Weaknesses
 • More detailed explanation of the strengths and weaknesses
-• Comments about the experiments. Are they convincing?
+• Comments about the experiments. Are they convincing? 两点不够, 要多写点.  主要问题在于关于实验的评论，其中没有写出令人信服/相关的观点。
 • How could the work be extended?
 • Additional comments, including unclear points, open research questions and applications.
 
@@ -285,9 +285,7 @@ anchor :An anchor is just a bounding box ($4$ values) with $C$ class label proba
 
 we can have for each grid cell three anchors; one for tall objects, one for wide objects, and one for square objects (we can define more)
 
-yolov3
-
-non maximum suppression. 解决double box. 这个果然考了. 
+non maximum suppression. 解决double box. 
 
 每个数据处理都要变换的操作是什么 一个是crop, 一个是normalizetion. 
 
@@ -569,3 +567,15 @@ a known class就是off, 如果new class with limited labeled examples, the switc
 DLL 写错了很多还是acc很高. 助教说 That is the deep learning. 
 
 不能LR, 只训练10个epoch
+
+
+
+为什么deeper不会better?
+
+
+
+googlenet op少, most efficient. 
+
+VGGnet acc高, op最多.
+
+resnet, moderate efficient,最高acc. 所以最受欢迎.
