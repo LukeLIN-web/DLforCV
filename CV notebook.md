@@ -28,8 +28,6 @@ weakness 可以搜索别人的review, openreview.
 
 
 
-
-
 运行前先activate conda 环境
 
 在服务器上运行`jupyter notebook --ip 服务器ip地址`  就可以查看服务器上的ipynb 文件了. 
@@ -255,7 +253,7 @@ mask是instance segmentation, 我们要改成semantic segment.
 
 upsampling, 用 un pooling , or deconv. deconv一般效果比较好. 
 
-网络太深, 会导致 梯度vanish. 所以, 需要skip或者leakyrelu. 不然收敛很慢. 
+网络太深, 会导致梯度vanish. 所以, 需要skip或者leakyrelu. 不然收敛很慢. 
 
 Transpose2d会增加分辨率, deconv.   **interpolation**
 
@@ -278,8 +276,6 @@ The output of the convolution operation is simply the element-wise product of th
  MNISTClutter数据集
 
 考试: iou 为什么不用? 因为iou不可导. 
-
-右x, y 下 , h,w.
 
 anchor :An anchor is just a bounding box ($4$ values) with $C$ class label probabilities (logits) and an additional confidence score $p_c$, sometimes called objectness score. 
 
