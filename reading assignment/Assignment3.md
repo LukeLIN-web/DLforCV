@@ -18,7 +18,7 @@ Briefly discuss the contributions of LSTM and Transformer. Compare RNN, LSTM, an
 
 1. Replacing RNNs with self-attention, designed and implemented Transformer models, the first sequence transduction model based entirely on attention.
 2. Proposed scaled dot-product attention, multi-head attention, and parameter-free position representation. 
-3. It inspired Bert and GPT. It did a good performance in images, audio, and videos.
+3. It inspired Bert and GPT. 
 
 ## Compare
 
@@ -48,8 +48,6 @@ The Transformer can process extremely long sequences.
 1. Self-attention mechanism, which allows the model to selectively attend to different parts of the input sequence when computing its output. This allows the Transformer to capture long-range dependencies between other sequence components without needing recurrent connections that can be computationally expensive to train. 
 2. Multi-head attention allows the model to attend to different parts of the input sequence simultaneously and to learn multiple representations of the same sequence at different levels of abstraction.
 
-
-
 # DLforCV
 
 1. 阅读题为 "LSTM和GRU的图解指南 "的博文： 一步一步的解释"，（（https://towardsdatascience.com/illustrated-guide-to-lstms-and-gru-s-a-stepbystep-explanation-44e9eb85bf21）。这篇博客可以给你一个关于LSTM和GRU的总体介绍。
@@ -70,7 +68,7 @@ The Transformer can process extremely long sequences.
 
 1. 用自我注意代替RNN，设计并实现了Transformer模型，这是第一个完全基于注意的序列转换模型。
 2. 提出了缩放点积注意、多头注意和无参数位置表示。
-3. 它启发了Bert和GPT。它在图像、音频和视频方面做了很好的表现。
+3. 它启发了Bert和GPT。
 
 ## 比较
 
