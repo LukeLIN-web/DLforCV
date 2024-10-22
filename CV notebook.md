@@ -463,19 +463,27 @@ encoder 输出是啥, decoder输出是啥.
 
 添加base 64的encoder实在是恶心.
 
- https://ealizadeh.com/blog/3-ways-to-add-images-to-your-jupyter-notebook/
 
-```
-<img src = " "/>
-```
+
+image2 img translation : cycle GAN .
+
+Train gan tricks.
+
+downsampling, 用 avg pooling, conv2d+ stride. 
+
+
+
+
+
+
+
+
 
 ## project5
 
-40 类. 
-
 ### pointnet
 
-第一步是输入和特征转换，它使用了一个T-Net和矩阵乘法。
+第一步是输入和特征转换，一个T-Net和矩阵乘法。
 
 第二步是对每个点独立应用一个共享的多层感知器（MLP）。这个MLP由几个具有ReLU激活函数的全连接层组成，这使得网络能够学习从输入空间到特征空间的非线性映射。
 
@@ -485,7 +493,7 @@ encoder 输出是啥, decoder输出是啥.
 
 no bias in norm? 
 
-当批量归一化 (BatchNorm) 应用于神经网络中的一个层时，它具有移动和缩放归一化激活的能力，从而有效地发挥偏差项的作用。BatchNorm 计算输入批次的均值和方差，并使用它们对激活进行归一化，这有助于网络的训练稳定性和泛化性。**training stability and generalization.**
+BatchNorm 应用于神经网络中的一个层时，它具有移动和缩放归一化激活的能力，从而有效地发挥偏差项的作用。BatchNorm 计算输入批次的均值和方差，并使用它们对激活进行归一化，这有助于网络的训练稳定性和泛化性。**training stability and generalization.**
 
 网络可以在**参数数量方面更加高效** less parameter，并且可以实现更好的性能。 better performance
 
@@ -493,16 +501,12 @@ no bias in norm?
 
 point cloud和 voxels 有什么利弊? 
 
-1. 体素：体素是体积像素的缩写，是 2D 像素的 3D 对应物.  它们提供 3D 空间的结构化表示，但对于高分辨率网格来说可能会占用大量内存且计算量大。 More memory , computation . 
-2. 点云：点云可以灵活高效地表示复杂的几何形状和捕获精细的细节。它们广泛用于 3D 对象识别、配准、重建和机器人技术等应用。
+1. voxels: 它们提供 3D 空间的结构化表示，但对于高分辨率网格来说可能会占用大量内存且计算量大。 More memory , computation . voxels,  规则网格允许轻松index , query 和处理数据,   Volume-based operations easy,  
+2. 点云：点云可以灵活高效地表示复杂的几何形状和捕获精细的细节。它们广泛用于 3D 对象识别、配准、重建和机器人技术等应用。而点云则在捕获和表示详细几何体方面提供了灵活性和效率。less memory. 
 
-体素提供了 3D 空间的结构化表示，规则网格允许轻松index , query 和处理数据,   Volume-based operations easy,  而点云则在捕获和表示详细几何体方面提供了灵活性和效率。less mmeory , 
-
-lr shcduler 的用处?
+lr scheduler 的用处?
 
 fast convergence, generalization, Handling noisy, Robustness to changes in data 
-
- 20个epoch  lr 乘上0.5. depend `scheduler.step()` which loop , 放在iteration循环就是20个iteration.
 
 recall weighted 和mean区别.   weighted是乘什么?  each class frequency . 
 
