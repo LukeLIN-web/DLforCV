@@ -1,12 +1,25 @@
 20%  paper review. 
 
-proposal 5%  Two pages (plus bibliography),due 10/14/24•
+proposal 5%  Two pages (plus bibliography),due 10/24/24•
 
 (20% grade) Paper Presentation:A (max) 15 slides presentation of related paper.10/22/24-10/31/24  paper pre 20% . Teams of three students present a paper related to their proposed project
 
-•(20% grade) Presentation:A (max) 15 slides presentation of theproject.11/26/24-12/10/24
+•(20% grade) Presentation:A (max)  15 slides presentation of the project.11/26/24-12/10/24
 
-project report,  35%  ONE report in 2025 CVPR format (8 pagesdouble column + references),
+project report,  35%  ONE report in 2025 CVPR format (8 pages, double column + references)
+
+proposal 标出要present哪篇论文
+
+You should be able to:
+• Find data
+• Find existing base implementations and/or pre-trained models
+• Complete it by the end of the semester
+
+Design and evaluation of a novel approach to an open problem
+• An extension of an existing approach presented in class
+• In-depth analysis of an existing technique
+• Comprehensive survey of existing approaches for solving a particular problem
+For inspiration, check recent conferences such as CVPR, ICCV, ECCV, ICLR ...
 
 #### Review
 
@@ -541,7 +554,7 @@ why it need scale and shift?
 
 #### relu的区别
 
-ReLU 将负值设置为零，LeakyReLU 为负值引入一个小斜率，而 PReLU 允许在训练期间学习斜率。 ReLU 显示vanishing gradient等问题，则从 ReLU 开始并考虑将 LeakyReLU 作为替代方案.
+ReLU 将负值设置为零，LeakyReLU 为负值引入一个小斜率，而 PReLU 允许在训练期间学习斜率。 ReLU 显示vanishing gradient等问题，则考虑将 LeakyReLU 作为替代方案.
 
 #### CLIP
 
@@ -553,7 +566,7 @@ pointclip是怎么弄的?
 
 Produce multi-view prediction.  
 
- few shot和zero shot 是怎么实现的?  few shot是用switch ,  inter-view adapter lets  model can quickly adapt to new classes with limited labeled data. 
+few shot和zero shot 是怎么实现的?  few shot是用switch ,  inter-view adapter lets  model can quickly adapt to new classes with limited labeled data. 
 a known class就是off, 如果new class with limited labeled examples, the switch is turned on, and the adapter module is activated to adapt the encoders specifically for that new class. 
 
  zero shot是用一个image 放进去看和哪个text最接近.  不会经过inter view adapter. 因为没有label.
@@ -566,15 +579,11 @@ a known class就是off, 如果new class with limited labeled examples, the switc
 
 不需要每层都dropout. activation  only once. 
 
-DLL 写错了很多还是acc很高. 助教说 That is the deep learning. 
+写错了很多还是acc很高. 助教说 That is the deep learning. 
 
 不能LR, 只训练10个epoch
 
-
-
 为什么deeper不会better?
-
-
 
 googlenet op少, most efficient. 
 
