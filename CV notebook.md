@@ -2,9 +2,43 @@
 
 proposal 5%  Two pages (plus bibliography),due 10/24/24•
 
-(20% grade) Paper Presentation:A (max) 15 slides presentation of related paper.10/22/24-10/31/24  paper pre 20% . Teams of three students present a paper related to their proposed project
+#### Paper Presentation
 
-•(20% grade) Presentation:A (max)  15 slides presentation of the project.11/26/24-12/10/24
+Paper Presentation ( 20% of grade)
+• Each group ~ 15 to 20 Slides:
+• Cover with title, authors and presenters’ name
+• Clear statement of the problem addressed
+• Motivation: Who cares? Why is important/interesting/ difficult? Why and how is this relevant to your  project?
+• Description of key contributions and technical ideas
+• Experimental set up and results
+• Strengths and Weaknesses
+• Interesting open research questions, applications or extensions.
+
+Paper Presentation ( 20% of grade)
+• Slides should be visual. Use images, videos, drawings, etc to convey the material.
+• Look for author’s material, project page, code, etc.
+• You can borrow a few slides, but must give credit to the
+source
+
+Paper Presentation ( 20% of grade)
+• Teams of three students present a paper related to
+their proposed project.
+• Email slides 2 days in advance for feedback.
+• Email final slides by 11:59pm the day before the presentation.
+
+评分标准:
+
+1. Organization of Talk
+2. Design of Slides (e.g. font size)  
+3. Clarity of Speaking & Pace of Pres
+4. Use of Pictures and Examples
+5. Response to Questions
+6. Enthusiasm
+7. Rapport with Audience (e.g. moving, eye contact
+
+#### final Presentation
+
+:A (max)  15 slides presentation of the project.11/26/24-12/10/24
 
 project report,  35%  ONE report in 2025 CVPR format (8 pages, double column + references)
 
