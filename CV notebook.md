@@ -1,6 +1,6 @@
 20%  paper review. 
 
-proposal 5%  Two pages (plus bibliography),due 10/24/24•
+proposal 5%  Two pages (plus bibliography)
 
 #### Paper Presentation
 
@@ -38,11 +38,9 @@ their proposed project.
 
 #### final Presentation
 
-:A (max)  15 slides presentation of the project.11/26/24-12/10/24
+:A (max)  15 slides presentation of the project.
 
 project report,  35%  ONE report in 2025 CVPR format (8 pages, double column + references)
-
-proposal 标出要present哪篇论文
 
 You should be able to:
 • Find data
