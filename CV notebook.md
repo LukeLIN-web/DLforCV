@@ -21,10 +21,6 @@ Paper Presentation ( 20% of grade)
 source
 
 Paper Presentation ( 20% of grade)
-• Teams of three students present a paper related to
-their proposed project.
-• Email slides 2 days in advance for feedback.
-• Email final slides by 11:59pm the day before the presentation.
 
 评分标准:
 
@@ -35,23 +31,6 @@ their proposed project.
 5. Response to Questions
 6. Enthusiasm
 7. Rapport with Audience (e.g. moving, eye contact
-
-#### final Presentation
-
-:A (max)  15 slides presentation of the project.
-
-project report,  35%  ONE report in 2025 CVPR format (8 pages, double column + references)
-
-You should be able to:
-• Find data
-• Find existing base implementations and/or pre-trained models
-• Complete it by the end of the semester
-
-Design and evaluation of a novel approach to an open problem
-• An extension of an existing approach presented in class
-• In-depth analysis of an existing technique
-• Comprehensive survey of existing approaches for solving a particular problem
-For inspiration, check recent conferences such as CVPR, ICCV, ECCV, ICLR ...
 
 #### Review
 
@@ -70,8 +49,6 @@ Review Format
 • Additional comments, including unclear points, open research questions and applications.
 
 weakness 可以搜索别人的review, openreview.
-
-
 
 运行前先activate conda 环境
 
@@ -622,3 +599,4 @@ googlenet op少, most efficient.
 VGGnet acc高, op最多.
 
 resnet, moderate efficient,最高acc. 所以最受欢迎.
+
